@@ -1,0 +1,11 @@
+{
+    "local-tomcat.tomcatInstances": [
+        {
+            "name": "tomcat1",
+            "catalinaHome": "D:\\devtools\\apache-tomcat-9.0.88\\bin",
+            "deploymentPort": 8080
+        }
+    ],
+    "local-tomcat.warDir": "target",
+    "cmake.configureOnOpen": false
+}

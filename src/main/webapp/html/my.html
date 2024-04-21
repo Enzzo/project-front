@@ -1,11 +1,47 @@
-<html>
-<head>
-    <title>RPG</title>
-    <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
-    <link href="/css/my.css" rel="stylesheet">
-</head>
-<body>
-<h1>RPG admin panel</h1>
+<!doctype html>
+    <head>
+        <title>RPG</title>
+        <script src=https://code.jquery.com/jquery-3.7.1.min.js></script>
+        <link href="/css/my.css" rel="stylesheet">
+    </head>
+    <body>
+    <h1>RPG admin panel</h1>
 
-</body>
+    <table id="mainTable">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Title</th>
+            <th>Race</th>
+            <th>Profession</th>
+            <th>Level</th>
+            <th>Birthday</th>
+            <th>Banned</th>
+        </tr>
+        </thead>
+    </table>
+
+    <button id="button" onclick="test()">TestScript</button>
+
+    </body>
+    <script>
+        function test() {
+            $.get("/rest/players", function(data){
+                $.each(data, function(idx, item){
+                    $('<tr>').html('<td>'
+                        + item.id + '</td><td>'
+                        + item.name + '</td><td>'
+                        + item.title + '</td><td>'
+                        + item.race + '</td><td>'
+                        + item.profession + '</td><td>'
+                        + item.level + '</td><td>'
+                        + new Date(item.birthday).toLocaleDateString() + '</td><td>'
+                        + item.banned + '</td>'
+
+                    ).appendTo("#mainTable");
+                })
+            })
+        }
+    </script>
 </html>

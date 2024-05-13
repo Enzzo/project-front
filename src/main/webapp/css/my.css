@@ -13,7 +13,16 @@
     margin: 10px;
 }
 
-#button{
-    display: block;
-    float:left;
+#pagination {
+    padding-left:0px;
+    height: auto;
+    margin:auto;
+    background-color: #2C64B4;
+    width: 30% !important;
+    text-align:center;
+}
+#pagination ul {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
 }

@@ -1,82 +1,61 @@
 $(document).ready(function() {
-$("h1").click(function (){
-    let selectorId = "selector";
-    let tableId = "mainTable";
-    makeSelector(selectorId);
-    loadPlayers(tableId);
-});
+    $("#rowsCount").change(function (){
+        makeNavPages($(this).val());
+    });
+
+    $("h1").click(function (){
+        let tableId = "mainTable";
+        loadPlayers(tableId);
+    });
 })
 
-function getPlayersCount(){
-    $.get("rest/players/count", function(data){
-            let select = $("#rowsCount");
-            if(!select.length){
-                select = makeSelector(data);
-            }
-        }
-    )
-}
-
 //  +-----------------------------------------------------------------------+
-//  |   loadPlayers()                                                        |
+//  |   loadPlayers()                                                       |
 //  +-----------------------------------------------------------------------+
 //  |   gets data from /rest/players and fills #mainTable                   |
 //  +-----------------------------------------------------------------------+
 function loadPlayers(tableId = "tableId"){
     let mainTable = $("#" + tableId);
-    if(!mainTable.length){
-        mainTable = makeBlankTable(tableId);
-    }
     let body = mainTable.find("tbody");
     if(!body.length){
         body = mainTable.append("<tbody></tbody>").find("tbody").last();
     }
+
+    let rowsToDisplay = $("#selector").val();
     $.get("/rest/players", function(data){
-        for(let i = 0; i < data.length; i++){
-            body.append("<tr></tr>")
-                .find("tr").last()
-                .append("<td>" + data[i].id + "</td>")
-                .append("<td>" + data[i].name + "</td>")
-                .append("<td>" + data[i].title + "</td>")
-                .append("<td>" + data[i].race + "</td>")
-                .append("<td>" + data[i].profession + "</td>")
-                .append("<td>" + data[i].level + "</td>")
-                .append("<td>" + new Date(data[i].birthday).toLocaleDateString() + "</td>")
-                .append("<td>" + data[i].banned + "</td>")
-        }
-    })
-}
-//  +-----------------------------------------------------------------------+
-//  |   makeBlankTable()                                                    |
-//  +-----------------------------------------------------------------------+
-//  |   makes blank table with header                                       |
-//  +-----------------------------------------------------------------------+
-function makeBlankTable(tableId = "tableId"){
-    let table = $(document.body).append("<table></table>")
-        .find("table").last()
-        .attr("id", tableId);
-
-        table.append("<thead></thead>").find("thead").last()
-            .append("<tr></tr>").find("tr").last()
-                .append("<th>#</th>")
-                .append("<th>Name</th>")
-                .append("<th>Title</th>")
-                .append("<th>Race</th>")
-                .append("<th>Profession</th>")
-                .append("<th>Level</th>")
-                .append("<th>Birthday</th>")
-                .append("<th>Banned</th>")
-
-    return table;
+        makeTable(data, body, rowsToDisplay);
+    });
 }
 
-function makeSelector(selectorId = "selectorId"){
-    let select = $("#" + selectorId);
-    if(!select.length){
-        select = $(document.body).append("<select></select>").find("select").last().attr("id", selectorId);
-        select.append("<option>" + 3 + "</option>");
-        select.append("<option>" + 5 + "</option>");
-        select.append("<option>" + 10 + "</option>");
-        select.append("<option>" + 20 + "</option>");
+//  +-----------------------------------------------------------------------+
+//  |   makeTable()                                                         |
+//  +-----------------------------------------------------------------------+
+//  |   fill destination table by data                                      |
+//  +-----------------------------------------------------------------------+
+function makeTable(data, table, count){
+    console.log(count);
+    for(let i = 0; i < data.length; i++){
+        table.append("<tr></tr>")
+            .find("tr").last()
+            .append("<td>" + data[i].id + "</td>")
+            .append("<td>" + data[i].name + "</td>")
+            .append("<td>" + data[i].title + "</td>")
+            .append("<td>" + data[i].race + "</td>")
+            .append("<td>" + data[i].profession + "</td>")
+            .append("<td>" + data[i].level + "</td>")
+            .append("<td>" + new Date(data[i].birthday).toLocaleDateString() + "</td>")
+            .append("<td>" + data[i].banned + "</td>")
     }
+}
+
+function makeNavPages(pages){
+    let nav = $("#pagination");
+    nav.empty();
+    let list = nav.append("<ul></ul>").find("ul").last();
+
+    list.append("<li><<</li>");
+    for(let i = 0; i < pages; ++i){
+        list.append("<li>"+(i+1)+"</li>");
+    }
+    list.append("<li>>></li>");
 }

@@ -1,8 +1,8 @@
 $(document).ready(function() {
-    let rows = initRowsSelect("rowsCount");
+    let rows = $("#rowsCount");
     let count = rows.val();
-    let table = initTable("mainTable");
-    let nav = initNav("pagination");
+    let table = $("#mainTable").find("tbody").last();
+    let nav = $("#pagination");
 
     $.ajax({
         url: "/rest/players/count",
@@ -28,13 +28,28 @@ $(document).ready(function() {
         });
     });
 
-    let li = nav.find("li");
-    $(li).mouseenter(function(){
-        $(this).css("background-color", "lightblue");
+    $(nav).on("mouseenter",function(){
+        let li = nav.find("li");
+        $(li).on("mouseenter",function(){
+            console.log("enter");
+            $(this).css("background-color", "lightblue");
+
+        })
+        $(li).on("mouseup",function(){
+            console.log(table);
+            console.log(count);
+            console.log($(this).text());
+            // loadPlayers(table, count, $(this).text());
+        })
     });
-    $(li).mouseout(function(){
-        $(this).css("background-color", "#b8cef3");
-    });
+
+    $(nav).mouseout(function(){
+        let li = nav.find("li");
+        $(li).mouseout(function(){
+            $(this).css("background-color", "#b8cef3");
+        });
+    })
+
 })
 
 //  +-----------------------------------------------------------------------+
@@ -89,38 +104,38 @@ function playersCount(){
     return count;
 }
 
-function initNav(id){
-    let nav = $("body").append("<div></div>").find("div").last();
-    nav.attr("id", id);
-    nav = nav.append("<nav></nav>").find("nav").last();
-    return nav.append("<ul></ul>").find("ul").last();
-}
+// function initNav(id){
+//     let nav = $("body").append("<div></div>").find("div").last();
+//     nav.attr("id", id);
+//     nav = nav.append("<nav></nav>").find("nav").last();
+//     return nav.append("<ul></ul>").find("ul").last();
+// }
 
-function initRowsSelect(id){
-    let select = $("body").append("<select></select>").find("select").last();
-    select.attr("id", id);
-    select.empty();
-    select.append("<option>3</option>");
-    select.append("<option>5</option>");
-    select.append("<option>10</option>");
-    select.append("<option>20</option>");
-    return select;
-}
-
-function initTable(id){
-    let table = $("body").append("<table></table>").find("table").last();
-    table.attr("id", id);
-    table.append("<thead></thead>").find("thead").last()
-       .append("<tr></tr>")
-       .find("tr").last()
-       .append("<th>id</th>")
-       .append("<th>name</th>")
-       .append("<th>title</th>")
-       .append("<th>race</th>")
-       .append("<th>profession</th>")
-       .append("<th>level</th>")
-       .append("<th>birthday</th>")
-       .append("<th>banned</th>");
-    table.append("<tbody></tbody>");
-    return table.find("tbody").last();
-}
+// function initRowsSelect(id){
+//     let select = $("body").append("<select></select>").find("select").last();
+//     select.attr("id", id);
+//     select.empty();
+//     select.append("<option>3</option>");
+//     select.append("<option>5</option>");
+//     select.append("<option>10</option>");
+//     select.append("<option>20</option>");
+//     return select;
+// }
+//
+// function initTable(id){
+//     let table = $("body").append("<table></table>").find("table").last();
+//     table.attr("id", id);
+//     table.append("<thead></thead>").find("thead").last()
+//        .append("<tr></tr>")
+//        .find("tr").last()
+//        .append("<th>id</th>")
+//        .append("<th>name</th>")
+//        .append("<th>title</th>")
+//        .append("<th>race</th>")
+//        .append("<th>profession</th>")
+//        .append("<th>level</th>")
+//        .append("<th>birthday</th>")
+//        .append("<th>banned</th>");
+//     table.append("<tbody></tbody>");
+//     return table.find("tbody").last();
+// }

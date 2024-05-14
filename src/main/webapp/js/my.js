@@ -1,11 +1,23 @@
-$(document).ready(function() {
+$(window).load(function() {
+    let tableId = "mainTable";
+    let rows = $("#rowsCount").val();
+    loadPlayers(tableId, rows, 0);
+
     $("#rowsCount").change(function (){
-        makeNavPages($(this).val());
+        $.get("/rest/players/count", function(data){
+            rows = $("#rowsCount").val();
+            let pagesCount = Math.ceil(data / rows);
+            makeNavPages(pagesCount);
+            loadPlayers(tableId, rows, 0);
+        })
     });
 
-    $("h1").click(function (){
-        let tableId = "mainTable";
-        loadPlayers(tableId);
+    $("h1").hover(function(){
+        console.log($(this).text())
+    });
+
+    $("li").hover(function(){
+        console.log($(this).text())
     });
 })
 
@@ -14,16 +26,20 @@ $(document).ready(function() {
 //  +-----------------------------------------------------------------------+
 //  |   gets data from /rest/players and fills #mainTable                   |
 //  +-----------------------------------------------------------------------+
-function loadPlayers(tableId = "tableId"){
+function loadPlayers(tableId = "tableId", rows, page){
     let mainTable = $("#" + tableId);
     let body = mainTable.find("tbody");
     if(!body.length){
         body = mainTable.append("<tbody></tbody>").find("tbody").last();
     }
 
-    let rowsToDisplay = $("#selector").val();
-    $.get("/rest/players", function(data){
-        makeTable(data, body, rowsToDisplay);
+    //  очистим таблицу, если в ней были какие-то данные
+    body.empty();
+    let url = "/rest/players?pageSize=" + rows;
+    url += "&pageNumber=" + page;
+    console.log(url);
+    $.get(url, function(data){
+        makeTable(data, body);
     });
 }
 
@@ -32,8 +48,7 @@ function loadPlayers(tableId = "tableId"){
 //  +-----------------------------------------------------------------------+
 //  |   fill destination table by data                                      |
 //  +-----------------------------------------------------------------------+
-function makeTable(data, table, count){
-    console.log(count);
+function makeTable(data, table){
     for(let i = 0; i < data.length; i++){
         table.append("<tr></tr>")
             .find("tr").last()

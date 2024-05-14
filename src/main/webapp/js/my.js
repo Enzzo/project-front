@@ -1,23 +1,28 @@
-$(window).load(function() {
-    let tableId = "mainTable";
-    let rows = $("#rowsCount").val();
-    loadPlayers(tableId, rows, 0);
+$(document).ready(function() {
+    let rows = initRowsSelect("rowsCount");
+    let count = rows.val();
+    let table = initTable("mainTable");
+    let nav = initNav("pagination");
+    loadPlayers(table, count, 0);
 
-    $("#rowsCount").change(function (){
+    $.get("/rest/players/count", function(data){
+        count = rows.val();
+        let pagesCount = Math.ceil(data / count);
+        makeNavPages(nav, pagesCount);
+        loadPlayers(table, count, 0);
+    })
+
+    rows.change(function (){
         $.get("/rest/players/count", function(data){
-            rows = $("#rowsCount").val();
-            let pagesCount = Math.ceil(data / rows);
-            makeNavPages(pagesCount);
-            loadPlayers(tableId, rows, 0);
+            count = rows.val();
+            let pagesCount = Math.ceil(data / count);
+            makeNavPages(nav, pagesCount);
+            loadPlayers(table, count, 0);
         })
     });
 
-    $("h1").hover(function(){
-        console.log($(this).text())
-    });
-
     $("li").hover(function(){
-        console.log($(this).text())
+        this.css("background-color", "lightblue");
     });
 })
 
@@ -26,20 +31,13 @@ $(window).load(function() {
 //  +-----------------------------------------------------------------------+
 //  |   gets data from /rest/players and fills #mainTable                   |
 //  +-----------------------------------------------------------------------+
-function loadPlayers(tableId = "tableId", rows, page){
-    let mainTable = $("#" + tableId);
-    let body = mainTable.find("tbody");
-    if(!body.length){
-        body = mainTable.append("<tbody></tbody>").find("tbody").last();
-    }
-
+function loadPlayers(tbody, rows, page){
     //  очистим таблицу, если в ней были какие-то данные
-    body.empty();
+    tbody.empty();
     let url = "/rest/players?pageSize=" + rows;
     url += "&pageNumber=" + page;
-    console.log(url);
     $.get(url, function(data){
-        makeTable(data, body);
+        makeTable(data, tbody);
     });
 }
 
@@ -63,14 +61,54 @@ function makeTable(data, table){
     }
 }
 
-function makeNavPages(pages){
-    let nav = $("#pagination");
-    nav.empty();
-    let list = nav.append("<ul></ul>").find("ul").last();
-
+function makeNavPages(list, pages){
     list.append("<li><<</li>");
     for(let i = 0; i < pages; ++i){
         list.append("<li>"+(i+1)+"</li>");
     }
     list.append("<li>>></li>");
+}
+
+function playersCount(){
+    let count = 0;
+    $.get("/rest/players/count", function(data){
+        count = data;
+    })
+    return count;
+}
+
+function initNav(id){
+    let nav = $("body").append("<div></div>").find("div").last();
+    nav.attr("id", id);
+    nav = nav.append("<nav></nav>").find("nav").last();
+    return nav.append("<ul></ul>").find("ul").last();
+}
+
+function initRowsSelect(id){
+    let select = $("body").append("<select></select>").find("select").last();
+    select.attr("id", id);
+    select.empty();
+    select.append("<option>3</option>");
+    select.append("<option>5</option>");
+    select.append("<option>10</option>");
+    select.append("<option>20</option>");
+    return select;
+}
+
+function initTable(id){
+    let table = $("body").append("<table></table>").find("table").last();
+    table.attr("id", id);
+    table.append("<thead></thead>").find("thead").last()
+       .append("<tr></tr>")
+       .find("tr").last()
+       .append("<th>id</th>")
+       .append("<th>name</th>")
+       .append("<th>title</th>")
+       .append("<th>race</th>")
+       .append("<th>profession</th>")
+       .append("<th>level</th>")
+       .append("<th>birthday</th>")
+       .append("<th>banned</th>");
+    table.append("<tbody></tbody>");
+    return table.find("tbody").last();
 }

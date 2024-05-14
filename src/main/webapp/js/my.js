@@ -3,26 +3,37 @@ $(document).ready(function() {
     let count = rows.val();
     let table = initTable("mainTable");
     let nav = initNav("pagination");
-    loadPlayers(table, count, 0);
 
-    $.get("/rest/players/count", function(data){
-        count = rows.val();
-        let pagesCount = Math.ceil(data / count);
-        makeNavPages(nav, pagesCount);
-        loadPlayers(table, count, 0);
-    })
-
-    rows.change(function (){
-        $.get("/rest/players/count", function(data){
+    $.ajax({
+        url: "/rest/players/count",
+        async: false,
+        success: function (data) {
             count = rows.val();
             let pagesCount = Math.ceil(data / count);
             makeNavPages(nav, pagesCount);
             loadPlayers(table, count, 0);
-        })
+        }
     });
 
-    $("li").hover(function(){
-        this.css("background-color", "lightblue");
+    rows.change(function () {
+        $.ajax({
+            url: "/rest/players/count",
+            async: false,
+            success: function (data) {
+                count = rows.val();
+                let pagesCount = Math.ceil(data / count);
+                makeNavPages(nav, pagesCount);
+                loadPlayers(table, count, 0);
+            }
+        });
+    });
+
+    let li = nav.find("li");
+    $(li).mouseenter(function(){
+        $(this).css("background-color", "lightblue");
+    });
+    $(li).mouseout(function(){
+        $(this).css("background-color", "#b8cef3");
     });
 })
 
@@ -62,6 +73,7 @@ function makeTable(data, table){
 }
 
 function makeNavPages(list, pages){
+    list.empty();
     list.append("<li><<</li>");
     for(let i = 0; i < pages; ++i){
         list.append("<li>"+(i+1)+"</li>");

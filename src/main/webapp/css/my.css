@@ -8,6 +8,7 @@
 
 #mainTable th, #mainTable td{
     border-style: solid;
+    border-width: 1px;
     width:auto;
     height:auto;
     padding: 1px;
@@ -17,7 +18,9 @@
 #pagination {
     padding-left:0px;
     height: auto;
-    margin:auto;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
     width: auto;
     background-color:blue;
     text-align:center;

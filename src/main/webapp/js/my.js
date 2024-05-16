@@ -3,7 +3,7 @@ $(document).ready(function() {
     showPage(0);
     let rows = $("#rowsCount");
     rows.change(function () {
-        showPage(getActivePage());
+        showPage(0);
     });
 })
 
@@ -31,27 +31,31 @@ function loadPlayers(rows, page){
 //  +-----------------------------------------------------------------------+
 function makeTable(data, table){
     for(let i = 0; i < data.length; i++){
-        table.append("<tr></tr>")
-            .find("tr").last()
-            .append("<td>" + data[i].id + "</td>")
-            .append("<td>" + data[i].name + "</td>")
-            .append("<td>" + data[i].title + "</td>")
-            .append("<td>" + data[i].race + "</td>")
-            .append("<td>" + data[i].profession + "</td>")
-            .append("<td>" + data[i].level + "</td>")
-            .append("<td>" + new Date(data[i].birthday).toLocaleDateString() + "</td>")
-            .append("<td>" + data[i].banned + "</td>")
-            .append("<td><img src = \"img\\edit.png\"></td>")
-            .append("<td><img src = \"img\\delete.png\"></td>").on("click", function() {
-                deleteRequest(data[i].id);
-        });
+        let row = table.append("<tr></tr>").find("tr").last();
+            row.append("<td class='id'>" + data[i].id + "</td>")
+                .append("<td class='name'>" + data[i].name + "</td>")
+                .append("<td class='title'>" + data[i].title + "</td>")
+                .append("<td class='race'>" + data[i].race + "</td>")
+                .append("<td class='profession'>" + data[i].profession + "</td>")
+                .append("<td class='level'>" + data[i].level + "</td>")
+                .append("<td class='birthday'>" + new Date(data[i].birthday).toLocaleDateString() + "</td>")
+                .append("<td class='banned'>" + data[i].banned + "</td>");
+
+                let editCell = row.append("<td class='edit'><img src = \"img\\edit.png\"></td>").find("td").last();
+                editCell.on("click", function(){
+                    editRow(row);
+                });
+
+                let deleteCell = row.append("<td class='delete'><img src = \"img\\delete.png\"></td>").find("td").last();
+                deleteCell.on("click", function() {
+                    deleteRequest(data[i].id);
+                });
     }
 }
 
 function makeNavPages(pages){
     let list = $("#pagination");
     list.empty();
-    // list.css("cursor", "pointer");
     for(let i = 0; i < pages; ++i){
         let li = list.append("<li>"+(i+1)+"</li>").find("li").last();
         li.on("click", function(){
@@ -106,4 +110,19 @@ function getActivePage(){
     let page = 0;
     page = $("#pagination").find("#active").text()-1;
     return page;
+}
+
+function editRow(row){
+    row.find(".id").attr("contenteditable", "true");
+    row.find(".name").attr("contenteditable", "true");
+    row.find(".title").attr("contenteditable", "true");
+    row.find(".race").attr("contenteditable", "true");
+    row.find(".profession").attr("contenteditable", "true");
+    row.find(".level").attr("contenteditable", "true");
+    row.find(".birthday").attr("contenteditable", "true");
+    row.find(".banned").attr("contenteditable", "true");
+    row.find(".edit").empty().append("<td class='edit'><img src = \"img\\save.png\"></td>").on("click", function(){
+        showPage(getActivePage());
+    });
+    row.find(".delete").css("display", "none");
 }

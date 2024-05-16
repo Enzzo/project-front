@@ -18,14 +18,21 @@
     padding-left:0px;
     height: auto;
     margin:auto;
-    background-color: #dbedf5;
-    width: 30% !important;
+    width: auto;
+    background-color:blue;
     text-align:center;
 }
 #pagination li{
     margin: 0;
     padding: 10px 10px;
     display: inline-block;
-    background-color: #b8cef3;
     transition: 100ms;
+}
+#pagination li:hover {
+    cursor:pointer;
+    background-color: #dbedf5;
+    transition: 100ms;
+}
+img:hover{
+    cursor:pointer;
 }

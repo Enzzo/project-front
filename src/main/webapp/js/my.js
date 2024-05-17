@@ -113,16 +113,90 @@ function getActivePage(){
 }
 
 function editRow(row){
-    row.find(".id").attr("contenteditable", "true");
     row.find(".name").attr("contenteditable", "true");
     row.find(".title").attr("contenteditable", "true");
-    row.find(".race").attr("contenteditable", "true");
-    row.find(".profession").attr("contenteditable", "true");
-    row.find(".level").attr("contenteditable", "true");
-    row.find(".birthday").attr("contenteditable", "true");
-    row.find(".banned").attr("contenteditable", "true");
-    row.find(".edit").empty().append("<td class='edit'><img src = \"img\\save.png\"></td>").on("click", function(){
+    makeRaceField(row.find(".race"));
+    makeProfessionField(row.find(".profession"));
+    makeBannedField(row.find(".banned"));
+    row.find(".edit").empty().append("<img src = \"img\\save.png\">").on("click", function(){
+
+        let id = row.find(".id").last().text();
+        let postUrl = "/rest/players/" + id;
+        let name = row.find(".name").last().text();
+        let title =  row.find(".title").last().text();
+        let race =  row.find(".race").last().find(".raceSelect");
+        let profession =  getProfessionValue(row.find(".profession"));
+        let banned =  row.find(".banned.bannedSelect");
+
+        console.log(banned);
+        console.log(banned.val());
+        console.log(banned.text());
+        console.log(banned.html());
+
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: postUrl,
+            async: false,
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify({name, title, race, profession, banned}),
+        })
         showPage(getActivePage());
     });
-    row.find(".delete").css("display", "none");
+    row.find(".delete").last().css("display", "none");
+}
+
+function makeRaceField(field){
+    let val = field.text();
+    field.empty();
+    field.append("<select class='raceSelect'></select>").find(".raceSelect").last()
+        .append("<option value='HUMAN'>HUMAN</option>")
+        .append("<option value='DWARF'>DWARF</option>")
+        .append("<option value='ELF'>ELF</option>")
+        .append("<option value='GIANT'>GIANT</option>")
+        .append("<option value='ORC'>ORC</option>")
+        .append("<option value='TROLL'>TROLL</option>")
+        .append("<option value='HOBBIT'>HOBBIT</option>");
+    field.find(".raceSelect").last().val(val);
+}
+
+function makeProfessionField(field){
+    let val = field.text();
+    field.empty();
+    field.append("<select class='professionSelect'></select>").find(".professionSelect").last()
+        .append("<option value='WARRIOR'>WARRIOR</option>")
+        .append("<option value='ROGUE'>ROGUE</option>")
+        .append("<option value='SORCERER'>SORCERER</option>")
+        .append("<option value='CLERIC'>CLERIC</option>")
+        .append("<option value='PALADIN'>PALADIN</option>")
+        .append("<option value='NAZGUL'>NAZGUL</option>")
+        .append("<option value='WARLOCK'>WARLOCK</option>")
+        .append("<option value='DRUID'>DRUID</option>");
+    field.find(".professionSelect").last().val(val);
+}
+
+function makeBannedField(field){
+    let val = field.text();
+    field.empty();
+    field.append("<select class='bannedSelect'></select>").find(".bannedSelect").last()
+        // .append("<option value='true'>true</option>")
+        // .append("<option value='false'>false</option>");
+        .append("<option>true</option>")
+        .append("<option>false</option>");
+    field.find(".bannedSelect").last().val(val);
+}
+
+function getRaceValue(){
+    return $(".raceSelect").last().val();
+}
+
+function getProfessionValue(){
+    return $(".professionSelect").last().val();
+}
+
+function getBannedValue(){
+    return $(".bannedSelect").last().val();
 }

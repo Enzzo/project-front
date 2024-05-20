@@ -4,6 +4,7 @@ $(document).ready(function() {
     let rows = $("#rowsCount");
     rows.change(function () {
         showPage(0);
+        console.log($(this));
     });
 })
 
@@ -115,23 +116,20 @@ function getActivePage(){
 function editRow(row){
     row.find(".name").attr("contenteditable", "true");
     row.find(".title").attr("contenteditable", "true");
-    makeRaceField(row.find(".race"));
-    makeProfessionField(row.find(".profession"));
-    makeBannedField(row.find(".banned"));
+    let raceField = makeRaceField(row.find(".race"));
+    let professionField = makeProfessionField(row.find(".profession"));
+    let bannedField = makeBannedField(row.find(".banned"));
+
+
     row.find(".edit").empty().append("<img src = \"img\\save.png\">").on("click", function(){
 
         let id = row.find(".id").last().text();
         let postUrl = "/rest/players/" + id;
         let name = row.find(".name").last().text();
         let title =  row.find(".title").last().text();
-        let race =  row.find(".race").last().find(".raceSelect");
-        let profession =  getProfessionValue(row.find(".profession"));
-        let banned =  row.find(".banned.bannedSelect");
-
-        console.log(banned);
-        console.log(banned.val());
-        console.log(banned.text());
-        console.log(banned.html());
+        let race =  raceField.val();
+        let profession =  professionField.val();
+        let banned = bannedField.val();
 
         $.ajax({
             headers: {
@@ -161,6 +159,7 @@ function makeRaceField(field){
         .append("<option value='TROLL'>TROLL</option>")
         .append("<option value='HOBBIT'>HOBBIT</option>");
     field.find(".raceSelect").last().val(val);
+    return field.find(".raceSelect").last();
 }
 
 function makeProfessionField(field){
@@ -176,6 +175,7 @@ function makeProfessionField(field){
         .append("<option value='WARLOCK'>WARLOCK</option>")
         .append("<option value='DRUID'>DRUID</option>");
     field.find(".professionSelect").last().val(val);
+    return field.find(".professionSelect").last();
 }
 
 function makeBannedField(field){
@@ -187,16 +187,5 @@ function makeBannedField(field){
         .append("<option>true</option>")
         .append("<option>false</option>");
     field.find(".bannedSelect").last().val(val);
-}
-
-function getRaceValue(){
-    return $(".raceSelect").last().val();
-}
-
-function getProfessionValue(){
-    return $(".professionSelect").last().val();
-}
-
-function getBannedValue(){
-    return $(".bannedSelect").last().val();
+    return field.find(".bannedSelect").last();
 }

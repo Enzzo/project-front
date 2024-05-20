@@ -1,8 +1,11 @@
 $(document).ready(function() {
 
     showPage(0);
+    initForm()
+
     let rows = $("#rowsCount");
     rows.change(function () {
+        initForm();
         showPage(0);
         console.log($(this));
     });
@@ -120,7 +123,6 @@ function editRow(row){
     let professionField = makeProfessionField(row.find(".profession"));
     let bannedField = makeBannedField(row.find(".banned"));
 
-
     row.find(".edit").empty().append("<img src = \"img\\save.png\">").on("click", function(){
 
         let id = row.find(".id").last().text();
@@ -150,7 +152,13 @@ function editRow(row){
 function makeRaceField(field){
     let val = field.text();
     field.empty();
-    field.append("<select class='raceSelect'></select>").find(".raceSelect").last()
+    makeRaceSelect(field, "raceSelect");
+    field.find(".raceSelect").last().val(val);
+    return field.find(".raceSelect").last();
+}
+
+function makeRaceSelect(selector, className){
+    selector.append("<select class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option value='HUMAN'>HUMAN</option>")
         .append("<option value='DWARF'>DWARF</option>")
         .append("<option value='ELF'>ELF</option>")
@@ -158,14 +166,18 @@ function makeRaceField(field){
         .append("<option value='ORC'>ORC</option>")
         .append("<option value='TROLL'>TROLL</option>")
         .append("<option value='HOBBIT'>HOBBIT</option>");
-    field.find(".raceSelect").last().val(val);
-    return field.find(".raceSelect").last();
 }
 
 function makeProfessionField(field){
     let val = field.text();
     field.empty();
-    field.append("<select class='professionSelect'></select>").find(".professionSelect").last()
+    makeProfessionSelect(field, "professionSelect");
+    field.find(".professionSelect").last().val(val);
+    return field.find(".professionSelect").last();
+}
+
+function makeProfessionSelect(selector, className){
+    selector.append("<select class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option value='WARRIOR'>WARRIOR</option>")
         .append("<option value='ROGUE'>ROGUE</option>")
         .append("<option value='SORCERER'>SORCERER</option>")
@@ -174,18 +186,74 @@ function makeProfessionField(field){
         .append("<option value='NAZGUL'>NAZGUL</option>")
         .append("<option value='WARLOCK'>WARLOCK</option>")
         .append("<option value='DRUID'>DRUID</option>");
-    field.find(".professionSelect").last().val(val);
-    return field.find(".professionSelect").last();
 }
 
 function makeBannedField(field){
     let val = field.text();
     field.empty();
-    field.append("<select class='bannedSelect'></select>").find(".bannedSelect").last()
-        // .append("<option value='true'>true</option>")
-        // .append("<option value='false'>false</option>");
-        .append("<option>true</option>")
-        .append("<option>false</option>");
+    makeBannedSelect(field, "bannedSelect");
     field.find(".bannedSelect").last().val(val);
     return field.find(".bannedSelect").last();
+}
+
+function makeBannedSelect(selector, className){
+    selector.append("<select class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
+        .append("<option>true</option>")
+        .append("<option>false</option>");
+}
+
+function initForm(){
+    let form = $("#createCharacter");
+    let id = getFreeId();
+    form.empty();
+    form.append("<input type='hidden' name='id' value='" + id + "' />");
+
+    form.append("<label for='name'>Name:</label>");
+    form.append("<input type='text' name='name' /><br>");
+
+    form.append("<label for='title'>Title:</label>");
+    form.append("<input type='text' name='title' /><br>");
+
+    let race = form.append("<label for='race'>Race:</label>");
+    makeRaceSelect(race, "race");
+    race.append("<br>");
+
+    let profession = form.append("<label for='profession'>Profession:</label>");
+    makeProfessionSelect(profession, "profession");
+    profession.append("<br>");
+
+    form.append("<label for='birthday'>Birthday:</label>");
+    form.append("<input type='date' name='birthday' /><br>");
+
+    let banned = form.append("<label for='banned'>Banned:</label>");
+    makeBannedSelect(banned, "banned");
+    banned.append("<br>");
+
+    form.append("<label for='level'>Level:</label>");
+    form.append("<input type='text' name='level' /><br>");
+
+    form.append("<input type='submit' />")
+}
+
+function getFreeId(){
+    return 3;
+}
+
+function sendData(form){
+    let formData = JSON.stringify($(form).serializeArray());
+    for()
+    console.log("hello");
+    console.log(formData);
+
+    $.ajax({
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        url: "/rest/players/3",
+        async: false,
+        type: "POST",
+        dataType: "json",
+        data: formData
+    })
 }

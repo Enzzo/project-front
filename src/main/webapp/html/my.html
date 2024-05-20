@@ -9,38 +9,46 @@
         <script src="/js/my.js"></script>
     </head>
     <body>
-    <h1>RPG admin panel</h1>
 
-    <select id="rowsCount">
-        <option>3</option>
-        <option>5</option>
-        <option>10</option>
-        <option>20</option>
-    </select>
+        <h1>RPG admin panel</h1>
 
-    <table id="mainTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Title</th>
-                <th>Race</th>
-                <th>Profession</th>
-                <th>Level</th>
-                <th>Birthday</th>
-                <th>Banned</th>
-                <th>Edit</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+        <select id="rowsCount">
+            <option>3</option>
+            <option>5</option>
+            <option>10</option>
+            <option>20</option>
+        </select>
 
-    <div id="pagination">
-        <nav>
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>Race</th>
+                    <th>Profession</th>
+                    <th>Level</th>
+                    <th>Birthday</th>
+                    <th>Banned</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
 
-        </nav>
-    </div>
+        <div id="pagination">
+            <nav>
+            </nav>
+        </div>
+        <hr>
+
+        <h2>Create new account</h2>
+
+        <!--  <form id="createCharacter" action="/rest/players/" method="post"> -->
+        <form id="createCharacter" onsubmit="sendData(this)">
+        </form>
+
     </body>
 </html>

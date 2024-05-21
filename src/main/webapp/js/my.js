@@ -1,16 +1,20 @@
 $(document).ready(function() {
 
-    showPage(0);
+    showPage(getActivePage());
     initForm()
 
     let rows = $("#rowsCount");
     rows.change(function () {
-        initForm();
-        showPage(0);
+        showPage(getActivePage());
     });
 
     $("#createButton").click(function(){
         $(this).hide();
+        $("#createCharacterForm").show();
+    })
+    $("#cancelButton").click(function(){
+        $("#createCharacterForm").hide();
+        $("#createButton").show();
     })
 })
 
@@ -19,7 +23,7 @@ $(document).ready(function() {
 //  +-----------------------------------------------------------------------+
 //  |   gets data from /rest/players and fills #mainTable                   |
 //  +-----------------------------------------------------------------------+
-function loadPlayers(rows, page){
+function getPlayers(rows, page){
     //  очистим таблицу, если в ней были какие-то данные
     let tbody = $("#mainTable").find("tbody").last();
     tbody.empty();
@@ -60,21 +64,30 @@ function makeTable(data, table){
     }
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   makeNavPages()                                                      |
+//  +-----------------------------------------------------------------------+
 function makeNavPages(pages){
     let list = $("#pagination");
     list.empty();
     for(let i = 0; i < pages; ++i){
         let li = list.append("<li>"+(i+1)+"</li>").find("li").last();
         li.on("click", function(){
-            loadPlayers(getRowsCount(), $(this).text()-1);
+            getPlayers(getRowsCount(), $(this).text()-1);
         });
     }
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   getRowsCount()                                                      |
+//  +-----------------------------------------------------------------------+
 function getRowsCount(){
     return $("#rowsCount").val();
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   getPlayersCount()                                                   |
+//  +-----------------------------------------------------------------------+
 function getPlayersCount(){
     let count = 0;
     $.ajax({
@@ -87,21 +100,40 @@ function getPlayersCount(){
     return count;
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   getPagesCount()                                                     |
+//  +-----------------------------------------------------------------------+
 function getPagesCount(){
     return Math.ceil(getPlayersCount() / getRowsCount());
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   showPage()                                                          |
+//  +-----------------------------------------------------------------------+
+//  |   Показывает выбранную страцицу.                                      |
+//  +-----------------------------------------------------------------------+
+//  |   Меняет
 function showPage(page){
     makeNavPages(getPagesCount());
-    loadPlayers(getRowsCount(), page);
+    getPlayers(getRowsCount(), page);
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   changeNumberStyle()                                                 |
+//  +-----------------------------------------------------------------------+
+//  |   Выделяет выбранную страницу.                                        |
+//  |   Задаёт цвет и идентфикатор 'active' выбранной странице              |
+//  |   Остальным страницам присваивает дефолтный цвет                      |
+//  +-----------------------------------------------------------------------+
 function changeNumberStyle(page) {
     let list = $("#pagination");
-    list.find("li").css("color", "black").removeAttr("id");
-    list.find("li").eq(page).css("color", "red").attr("id", "active");
+    list.find("li").removeAttr("id");
+    list.find("li").eq(page).attr("id", "active");
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   deleteRequest()                                                     |
+//  +-----------------------------------------------------------------------+
 function deleteRequest(id){
     $.ajax({
         url: "/rest/players/" + id,
@@ -113,12 +145,16 @@ function deleteRequest(id){
     })
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   getActivePage()                                                     |
+//  +-----------------------------------------------------------------------+
 function getActivePage(){
-    let page = 0;
-    page = $("#pagination").find("#active").text()-1;
-    return page;
+    return Math.max(0, $("#pagination").find("#active").text()-1);;
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   editRow()                                                           |
+//  +-----------------------------------------------------------------------+
 function editRow(row){
     row.find(".name").attr("contenteditable", "true");
     row.find(".title").attr("contenteditable", "true");
@@ -127,7 +163,6 @@ function editRow(row){
     let bannedField = makeBannedField(row.find(".banned"));
 
     row.find(".edit").empty().append("<img src = \"img\\save.png\">").on("click", function(){
-
         let id = row.find(".id").last().text();
         let postUrl = "/rest/players/" + id;
         let name = row.find(".name").last().text();
@@ -153,6 +188,9 @@ function editRow(row){
     row.find(".delete").last().css("display", "none");
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   makeRaceField()                                                     |
+//  +-----------------------------------------------------------------------+
 function makeRaceField(field){
     let val = field.text();
     field.empty();
@@ -161,6 +199,9 @@ function makeRaceField(field){
     return field.find(".raceSelect").last();
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   makeRaceSelect()                                                    |
+//  +-----------------------------------------------------------------------+
 function makeRaceSelect(selector, className){
     selector.append("<select id='" + className + "' class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option value='HUMAN'>HUMAN</option>")
@@ -172,6 +213,9 @@ function makeRaceSelect(selector, className){
         .append("<option value='HOBBIT'>HOBBIT</option>");
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   makeProfessionField()                                               |
+//  +-----------------------------------------------------------------------+
 function makeProfessionField(field){
     let val = field.text();
     field.empty();
@@ -180,6 +224,9 @@ function makeProfessionField(field){
     return field.find(".professionSelect").last();
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   makeProfessionSelect()                                              |
+//  +-----------------------------------------------------------------------+
 function makeProfessionSelect(selector, className){
     selector.append("<select id='" + className + "' class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option value='WARRIOR'>WARRIOR</option>")
@@ -192,6 +239,9 @@ function makeProfessionSelect(selector, className){
         .append("<option value='DRUID'>DRUID</option>");
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   makeBannedField()                                                   |
+//  +-----------------------------------------------------------------------+
 function makeBannedField(field){
     let val = field.text();
     field.empty();
@@ -200,15 +250,22 @@ function makeBannedField(field){
     return field.find(".bannedSelect").last();
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   makeBannedSelect()                                                  |
+//  +-----------------------------------------------------------------------+
 function makeBannedSelect(selector, className){
     selector.append("<select id='" + className + "' class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option>true</option>")
         .append("<option>false</option>");
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   initForm()                                                          |
+//  +-----------------------------------------------------------------------+
 function initForm(){
-    let form = $("#createCharacter");
+    let form = $("#createCharacterForm");
     form.empty();
+    form.append("<h2>Create new account:</h2>");
 
     form.append("<label for='name'>Name:</label>");
     form.append("<input id='nameField' type='text' name='name' minlength='1' maxlength='12' /><br>");
@@ -235,9 +292,14 @@ function initForm(){
     form.append("<input id='levelField' type='number' name='level' min='1' max='100'/><br>");
 
     form.append("<input type='submit' />");
-    form.append("<input type='button' ")
+    form.append("<input type='button' id='cancelButton' value='Cancel' />")
+
+    form.hide();
 }
 
+//  +-----------------------------------------------------------------------+
+//  |   sendData()                                                          |
+//  +-----------------------------------------------------------------------+
 function sendData(form){
     let data = $(form).serializeArray();
     let name = data[0].value;

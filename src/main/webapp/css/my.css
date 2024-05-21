@@ -30,6 +30,10 @@
     padding: 10px 10px;
     display: inline-block;
     transition: 100ms;
+    color: pink;
+}
+#pagination li#active{
+    color: red;
 }
 #pagination li:hover {
     cursor:pointer;

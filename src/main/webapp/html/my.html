@@ -11,43 +11,45 @@
     <body>
 
         <h1>RPG admin panel</h1>
-
-        <select id="rowsCount">
-            <option>3</option>
-            <option>5</option>
-            <option>10</option>
-            <option>20</option>
-        </select>
-
-        <table id="mainTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Title</th>
-                    <th>Race</th>
-                    <th>Profession</th>
-                    <th>Level</th>
-                    <th>Birthday</th>
-                    <th>Banned</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-
-        <div id="pagination">
-            <nav>
-            </nav>
-        </div>
-        <hr>
-
         <input type='button' id='createButton' value='Create New User' />
 
-        <form id="createCharacterForm" onsubmit="sendData(this)">
+        <form id="createCharacterForm">
         </form>
+
+        <section id="info">
+            <select id="rowsCount">
+                <option>3</option>
+                <option>5</option>
+                <option>10</option>
+                <option>20</option>
+            </select>
+
+            <table id="mainTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Race</th>
+                        <th>Profession</th>
+                        <th>Level</th>
+                        <th>Birthday</th>
+                        <th>Banned</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <div id="pagination">
+                <nav>
+                </nav>
+            </div>
+            <hr>
+        </section>
+
 
     </body>
 </html>

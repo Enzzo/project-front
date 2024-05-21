@@ -1,12 +1,25 @@
-#mainTable{
-    border-style: solid;
-    border-width: 1px;
-    margin-left: auto;
-    margin-right: auto;
-    width:50%;
+body{
+    background-image: url("/img/background.png");
 }
 
-#mainTable th, #mainTable td{
+h1{
+    text-align: center;
+}
+
+#info{
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+#mainTable{
+    margin-top: 1%;
+    border-style: solid;
+    border-width: 3px;
+    width: 100%;
+    border-spacing: 5px;
+}
+
+#mainTable tr, #mainTable td{
     border-style: solid;
     border-width: 1px;
     width:auto;
@@ -14,26 +27,34 @@
     padding: 1px;
     margin: 10px;
 }
+#mainTable thead tr{
+    text-align: center;
+    background: #666; /* Цвет фона */
+    color: #fff; /* Цвет текста */
+}
 
 #pagination {
+    background: rgb(110,176,14);
+    background: radial-gradient(circle, rgba(110,176,14,1) 0%, rgba(68,153,17,0.5662465669861695) 90%, rgba(85,139,21,0) 100%);
     padding-left:0px;
     height: auto;
     margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
     width: auto;
-    background-color:blue;
     text-align:center;
+
 }
 #pagination li{
     margin: 0;
     padding: 10px 10px;
     display: inline-block;
     transition: 100ms;
-    color: pink;
+    color: black;
 }
 #pagination li#active{
     color: red;
+    font-weight: bold;
 }
 #pagination li:hover {
     cursor:pointer;
@@ -42,4 +63,23 @@
 }
 img:hover{
     cursor:pointer;
+}
+
+#createButton, #createCharacterForm{
+    float: left;
+    display: block;
+    margin: 1%;
+}
+
+.edit, .delete{
+    text-align: center;
+}
+tr:nth-child(even) {
+    background: rgba(227, 227, 227, 0.75); /* Цвет фона */
+}
+
+label {
+    display: inline-block;
+    width: 100px;
+    text-align: right;
 }

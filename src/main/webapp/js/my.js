@@ -12,6 +12,9 @@ $(document).ready(function() {
         $(this).hide();
         $("#createCharacterForm").show();
     })
+    $("#sendButton").click(function(){
+        sendData($("#createCharacterForm"));
+    })
     $("#cancelButton").click(function(){
         $("#createCharacterForm").hide();
         $("#createButton").show();
@@ -24,29 +27,34 @@ $(document).ready(function() {
 //  |   rows - максимальное количество рядов для отображения в таблице      |
 //  |   page - номер страницы, которую необходимо отобразить                |
 //  +-----------------------------------------------------------------------+
-//  |   Получает GET с url /rest/players и заполняет таблицу #mainTable     |
-//  |   данными (data)                                                      |
+//  |   Получает GET с url /rest/players и                                  |
+//  |   возвращает полученные данные                                        |
 //  +-----------------------------------------------------------------------+
 function getPlayers(rows, page){
-    //  очистим таблицу, если в ней были какие-то данные
-    let tbody = $("#mainTable").find("tbody").last();
-    tbody.empty();
-    let url = "/rest/players?pageSize=" + rows;
-    url += "&pageNumber=" + page;
-    $.get(url, function(data){
-        makeTable(data, tbody);
-    });
-    changeNumberStyle(page);
+    let url = "/rest/players?pageSize=" + rows + "&pageNumber=" + page;
+    let getData = null;
+    $.ajax({
+        method: "GET",
+        async: false,
+        url: url,
+        success: function(data){
+            getData = data;
+        }
+    })
+    return getData;
 }
 
 //  +-----------------------------------------------------------------------+
-//  |   makeTable()                                                         |
+//  |   redrawTable()                                                       |
 //  +-----------------------------------------------------------------------+
-//  |   fill destination table by data                                      |
+//  |   Перерисовывает таблицу, на основе данных, хранящихся в data         |
 //  +-----------------------------------------------------------------------+
-function makeTable(data, table){
+function redrawTable(data){
+    let tbody = $("#mainTable").find("tbody").last();
+    tbody.empty();
+
     for(let i = 0; i < data.length; i++){
-        let row = table.append("<tr></tr>").find("tr").last();
+        let row = tbody.append("<tr></tr>").find("tr").last();
             row.append("<td class='id'>" + data[i].id + "</td>")
                 .append("<td class='name'>" + data[i].name + "</td>")
                 .append("<td class='title'>" + data[i].title + "</td>")
@@ -69,15 +77,21 @@ function makeTable(data, table){
 }
 
 //  +-----------------------------------------------------------------------+
-//  |   makeNavPages()                                                      |
+//  |   redrawNavPages()                                                    |
 //  +-----------------------------------------------------------------------+
-function makeNavPages(pages){
+//  |   Перерисовывает навиганионную панель                                 |
+//  +-----------------------------------------------------------------------+
+function redrawNavPages(pages){
     let list = $("#pagination");
     list.empty();
     for(let i = 0; i < pages; ++i){
         let li = list.append("<li>"+(i+1)+"</li>").find("li").last();
         li.on("click", function(){
-            getPlayers(getRowsCount(), $(this).text()-1);
+            let page = $(this).text()-1;
+            let rows = getRowsCount();
+            let playersData = getPlayers(rows, page);
+            redrawTable(playersData);
+            setActivePage(page);
         });
     }
 }
@@ -85,12 +99,18 @@ function makeNavPages(pages){
 //  +-----------------------------------------------------------------------+
 //  |   getRowsCount()                                                      |
 //  +-----------------------------------------------------------------------+
+//  |   Возвращает значение селектора #rowsCount                            |
+//  +-----------------------------------------------------------------------+
+//  |   Максимальное количество рядов для отображения в таблице             |
+//  +-----------------------------------------------------------------------+
 function getRowsCount(){
     return $("#rowsCount").val();
 }
 
 //  +-----------------------------------------------------------------------+
 //  |   getPlayersCount()                                                   |
+//  +-----------------------------------------------------------------------+
+//  |   Возвращает общее количество аккаунтов в базе данных                 |
 //  +-----------------------------------------------------------------------+
 function getPlayersCount(){
     let count = 0;
@@ -105,31 +125,37 @@ function getPlayersCount(){
 }
 
 //  +-----------------------------------------------------------------------+
-//  |   getPagesCount()                                                     |
+//  |   pagesTotal()                                                        |
 //  +-----------------------------------------------------------------------+
-function getPagesCount(){
+//  |   Возвращает количество страниц для отображения по формуле:           |
+//  |   PlayersCount / RowsCount, где                                       |
+//  |   PlayersCount    - общее количество игроков в базе данных            |
+//  |   RowsCount       - количество рядов для отображения в таблице        |
+//  +-----------------------------------------------------------------------+
+function pagesTotal(){
     return Math.ceil(getPlayersCount() / getRowsCount());
 }
 
 //  +-----------------------------------------------------------------------+
 //  |   showPage()                                                          |
 //  +-----------------------------------------------------------------------+
-//  |   Показывает выбранную страцицу.                                      |
+//  |   Показывает выбранную страницу.                                      |
 //  +-----------------------------------------------------------------------+
-//  |   Меняет
 function showPage(page){
-    makeNavPages(getPagesCount());
-    getPlayers(getRowsCount(), page);
+    let rows = getRowsCount();
+    let playersData = getPlayers(rows, page);
+    redrawTable(playersData);
+    redrawNavPages(pagesTotal());
+    setActivePage(page);
 }
 
 //  +-----------------------------------------------------------------------+
-//  |   changeNumberStyle()                                                 |
+//  |   setActivePage()                                                     |
 //  +-----------------------------------------------------------------------+
 //  |   Выделяет выбранную страницу.                                        |
-//  |   Задаёт цвет и идентфикатор 'active' выбранной странице              |
-//  |   У остальных страниц стили сбрасываются на дефолт                    |
+//  |   Задаёт идентфикатор 'active' выбранной странице                     |
 //  +-----------------------------------------------------------------------+
-function changeNumberStyle(page) {
+function setActivePage(page) {
     let list = $("#pagination");
     list.find("li").removeAttr("id");
     list.find("li").eq(page).attr("id", "active");
@@ -166,6 +192,11 @@ function deleteRequest(id){
 //  +-----------------------------------------------------------------------+
 function getActivePage(){
     return Math.max(0, $("#pagination").find("#active").text()-1);
+}
+
+function getLastPage(){
+    let lastPage = $("#pagination li").length;
+    return lastPage;
 }
 
 //  +-----------------------------------------------------------------------+
@@ -317,7 +348,7 @@ function initForm(){
     form.append("<label for='level'>Level:</label>");
     form.append("<input id='levelField' type='number' name='level' min='1' max='100'/><br>");
 
-    form.append("<input type='submit' />");
+    form.append("<input type='button' id='sendButton' value='Save' />");
     form.append("<input type='button' id='cancelButton' value='Cancel' />")
 
     form.hide();
@@ -348,7 +379,9 @@ function sendData(form){
             for(let v in data){
                 v.value = "";
             }
-            showPage(getActivePage());
+            redrawNavPages(pagesTotal());
+            let page = getLastPage()-1;
+            showPage(page);
         }
     })
 }

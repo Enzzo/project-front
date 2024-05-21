@@ -7,8 +7,11 @@ $(document).ready(function() {
     rows.change(function () {
         initForm();
         showPage(0);
-        console.log($(this));
     });
+
+    $("#createButton").click(function(){
+        $(this).hide();
+    })
 })
 
 //  +-----------------------------------------------------------------------+
@@ -133,6 +136,7 @@ function editRow(row){
         let profession =  professionField.val();
         let banned = bannedField.val();
 
+        let sendData =JSON.stringify({name, title, race, profession, banned});
         $.ajax({
             headers: {
                 'Accept': 'application/json',
@@ -142,7 +146,7 @@ function editRow(row){
             async: false,
             type: "POST",
             dataType: "json",
-            data: JSON.stringify({name, title, race, profession, banned}),
+            data: sendData,
         })
         showPage(getActivePage());
     });
@@ -158,7 +162,7 @@ function makeRaceField(field){
 }
 
 function makeRaceSelect(selector, className){
-    selector.append("<select class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
+    selector.append("<select id='" + className + "' class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option value='HUMAN'>HUMAN</option>")
         .append("<option value='DWARF'>DWARF</option>")
         .append("<option value='ELF'>ELF</option>")
@@ -177,7 +181,7 @@ function makeProfessionField(field){
 }
 
 function makeProfessionSelect(selector, className){
-    selector.append("<select class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
+    selector.append("<select id='" + className + "' class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option value='WARRIOR'>WARRIOR</option>")
         .append("<option value='ROGUE'>ROGUE</option>")
         .append("<option value='SORCERER'>SORCERER</option>")
@@ -197,63 +201,66 @@ function makeBannedField(field){
 }
 
 function makeBannedSelect(selector, className){
-    selector.append("<select class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
+    selector.append("<select id='" + className + "' class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option>true</option>")
         .append("<option>false</option>");
 }
 
 function initForm(){
     let form = $("#createCharacter");
-    let id = getFreeId();
     form.empty();
-    form.append("<input type='hidden' name='id' value='" + id + "' />");
 
     form.append("<label for='name'>Name:</label>");
-    form.append("<input type='text' name='name' /><br>");
+    form.append("<input id='nameField' type='text' name='name' minlength='1' maxlength='12' /><br>");
 
     form.append("<label for='title'>Title:</label>");
-    form.append("<input type='text' name='title' /><br>");
+    form.append("<input id='titleField' type='text' name='title' minlength='1' maxlength='30' /><br>");
 
     let race = form.append("<label for='race'>Race:</label>");
-    makeRaceSelect(race, "race");
+    makeRaceSelect(race, "raceField");
     race.append("<br>");
 
     let profession = form.append("<label for='profession'>Profession:</label>");
-    makeProfessionSelect(profession, "profession");
+    makeProfessionSelect(profession, "professionField");
     profession.append("<br>");
 
     form.append("<label for='birthday'>Birthday:</label>");
-    form.append("<input type='date' name='birthday' /><br>");
+    form.append("<input id='birthdayField' type='date' name='birthday' /><br>");
 
     let banned = form.append("<label for='banned'>Banned:</label>");
-    makeBannedSelect(banned, "banned");
+    makeBannedSelect(banned, "bannedField");
     banned.append("<br>");
 
     form.append("<label for='level'>Level:</label>");
-    form.append("<input type='text' name='level' /><br>");
+    form.append("<input id='levelField' type='number' name='level' min='1' max='100'/><br>");
 
-    form.append("<input type='submit' />")
-}
-
-function getFreeId(){
-    return 3;
+    form.append("<input type='submit' />");
+    form.append("<input type='button' ")
 }
 
 function sendData(form){
-    let formData = JSON.stringify($(form).serializeArray());
-    for()
-    console.log("hello");
-    console.log(formData);
+    let data = $(form).serializeArray();
+    let name = data[0].value;
+    let title =  data[1].value;
+    let race =  data[2].value;
+    let profession =  data[3].value;
+    let birthday =  new Date(data[4].value).getTime();
+    let banned = data[5].value;
+    let level =  data[6].value;
 
+    let sendData = JSON.stringify({name, title, race, profession, birthday, banned, level});
     $.ajax({
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        url: "/rest/players/3",
-        async: false,
+        url: "/rest/players",
         type: "POST",
-        dataType: "json",
-        data: formData
+        dataType: 'json',
+        contentType: 'application/json;charset=UTF-8',
+        async: false,
+        data: sendData,
+        success: function(){
+            for(let v in data){
+                v.value = "";
+            }
+            showPage(getActivePage());
+        }
     })
 }

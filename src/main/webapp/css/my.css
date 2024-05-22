@@ -41,8 +41,8 @@ h1{
 }
 
 #pagination {
-    background: rgb(110,176,14);
-    background: radial-gradient(circle, rgba(110,176,14,1) 0%, rgba(68,153,17,0.5662465669861695) 90%, rgba(85,139,21,0) 100%);
+    background: rgba(110,176,14, 0.34);
+    background: radial-gradient(circle, rgba(110,176,14,0.34) 0%, rgba(68,153,17,0.5662465669861695) 90%, rgba(85,139,21,0) 100%);
     padding-left:0px;
     height: auto;
     margin-top: 10px;
@@ -76,8 +76,10 @@ h1{
 }
 
 #createCharacterForm{
-    border-radius: 10px;
     background-color: rgba(189, 234, 19, 0.34);
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 1px;
     padding: 10px;
 }
 #createCharacterForm > *{
@@ -90,9 +92,11 @@ h1{
     text-align: center;
 }
 tr:nth-child(even) {
-    background: rgba(227, 227, 227, 0.75);
+    background-color: rgba(155, 151, 151, 0.1);
 }
-
+tr:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.1);
+}
 label {
     display: inline-block;
     width: 100px;

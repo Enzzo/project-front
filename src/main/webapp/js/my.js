@@ -5,7 +5,11 @@ $(document).ready(function() {
 
     let rows = $("#rowsCount");
     rows.change(function () {
-        showPage(getActivePage());
+        let total = pagesTotal();
+        let active = getActivePage();
+        let page = Math.min(total-1, active);
+        //---------------------------------------------------
+        showPage(page);
     });
 
     $("#createButton").click(function(){
@@ -313,7 +317,7 @@ function makeBannedField(field){
 function makeBannedSelect(selector, className){
     selector.append("<select id='" + className + "' class='" + className + "' name='"+ className +"'></select>").find("."+className).last()
         .append("<option>true</option>")
-        .append("<option>false</option>");
+        .append("<option selected='selected'>false</option>");
 }
 
 //  +-----------------------------------------------------------------------+

@@ -27,6 +27,13 @@ h1{
     padding: 1px;
     margin: 10px;
 }
+
+#mainTable tbody tr:hover{
+    cursor:pointer;
+    background-color: #dbedf5;
+    transition: 100ms;
+}
+
 #mainTable thead tr{
     text-align: center;
     background: #666; /* Цвет фона */
@@ -58,11 +65,8 @@ h1{
 }
 #pagination li:hover {
     cursor:pointer;
-    background-color: #dbedf5;
+    background-color: rgba(68,153,17,0.5662465669861695);
     transition: 100ms;
-}
-img:hover{
-    cursor:pointer;
 }
 
 #createButton, #createCharacterForm{
@@ -71,11 +75,22 @@ img:hover{
     margin: 1%;
 }
 
+#createCharacterForm{
+    border-radius: 10px;
+    background-color: rgba(189, 234, 19, 0.34);
+    padding: 10px;
+}
+#createCharacterForm > *{
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 1px;
+    margin-gottom: 1px;
+}
 .edit, .delete{
     text-align: center;
 }
 tr:nth-child(even) {
-    background: rgba(227, 227, 227, 0.75); /* Цвет фона */
+    background: rgba(227, 227, 227, 0.75);
 }
 
 label {
